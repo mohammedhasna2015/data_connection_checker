@@ -5,8 +5,8 @@ import 'package:test/test.dart';
 
 void main() async {
   group('data_connection_checker', () {
-    StreamSubscription<DataConnectionStatus> listener1;
-    StreamSubscription<DataConnectionStatus> listener2;
+    StreamSubscription<DataConnectionStatus>? listener1;
+    StreamSubscription<DataConnectionStatus>? listener2;
 
     tearDown(() {
       // destroy any active listener after each test
@@ -44,7 +44,7 @@ void main() async {
 
     test(
         '''DataConnectionChecker().lastTryResults should not be empty after '''
-        '''an awaited call to either hasConnection or connectionStatus''', () {
+            '''an awaited call to either hasConnection or connectionStatus''', () {
       expect(
         DataConnectionChecker().lastTryResults,
         isNotEmpty,
@@ -53,7 +53,7 @@ void main() async {
 
     test(
         '''Unawaited call to connectionStatus '''
-        '''should return a Future<DataConnectionStatus>''', () {
+            '''should return a Future<DataConnectionStatus>''', () {
       expect(
         DataConnectionChecker().connectionStatus,
         isA<Future<DataConnectionStatus>>(),
@@ -62,7 +62,7 @@ void main() async {
 
     test(
         '''Awaited call to connectionStatus '''
-        '''should return a Future<DataConnectionStatus>''', () async {
+            '''should return a Future<DataConnectionStatus>''', () async {
       expect(
         await DataConnectionChecker().connectionStatus,
         isA<DataConnectionStatus>(),
@@ -95,7 +95,7 @@ void main() async {
 
     test('''We should have listeners 3''', () async {
       listener1 = DataConnectionChecker().onStatusChange.listen((_) {});
-      await listener1.cancel();
+      await listener1!.cancel();
       listener2 = DataConnectionChecker().onStatusChange.listen((_) {});
       expect(
         DataConnectionChecker().hasListeners,
@@ -105,14 +105,14 @@ void main() async {
 
     test('''We shouldn't have any listeners 2''', () async {
       listener1 = DataConnectionChecker().onStatusChange.listen((_) {});
-      await listener1.cancel();
+      await listener1!.cancel();
       listener2 = DataConnectionChecker().onStatusChange.listen((_) {});
-      await listener2.cancel();
+      await listener2!.cancel();
       expect(
         DataConnectionChecker().hasListeners,
         isFalse,
       );
     });
-    
+
   });
 }

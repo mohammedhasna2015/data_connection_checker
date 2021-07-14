@@ -26,12 +26,12 @@ class DataConnectionChecker {
   ///
   /// Timeout is the number of seconds before a request is dropped
   /// and an address is considered unreachable
-  static const Duration DEFAULT_TIMEOUT = const Duration(seconds: 10);
+  static const Duration DEFAULT_TIMEOUT = Duration(seconds: 10);
 
   /// Default interval is 10 seconds
   ///
   /// Interval is the time between automatic checks
-  static const Duration DEFAULT_INTERVAL = const Duration(seconds: 10);
+  static const Duration DEFAULT_INTERVAL = Duration(seconds: 10);
 
   /// Predefined reliable addresses. This is opinionated
   /// but should be enough. See https://www.dnsperf.com/#!dns-resolvers
@@ -111,16 +111,16 @@ class DataConnectionChecker {
   /// Ping a single address. See [AddressCheckOptions] for
   /// info on the accepted argument.
   Future<AddressCheckResult> isHostReachable(
-    AddressCheckOptions options,
-  ) async {
-    Socket sock;
+      AddressCheckOptions options,
+      ) async {
+    Socket? sock;
     try {
       sock = await Socket.connect(
         options.address,
         options.port,
         timeout: options.timeout,
       );
-      sock?.destroy();
+      sock.destroy();
       return AddressCheckResult(options, true);
     } catch (e) {
       sock?.destroy();
@@ -140,7 +140,7 @@ class DataConnectionChecker {
   /// we assume an internet connection is available and return `true`.
   /// `false` otherwise.
   Future<bool> get hasConnection async {
-    List<Future<AddressCheckResult>> requests = [];
+    var requests = <Future<AddressCheckResult>>[];
 
     for (var addressOptions in addresses) {
       requests.add(isHostReachable(addressOptions));
@@ -174,7 +174,7 @@ class DataConnectionChecker {
   //
   // If there are listeners, a timer is started which runs this function again
   // after the specified time in 'checkInterval'
-  _maybeEmitStatusUpdate([Timer timer]) async {
+  Future<void> _maybeEmitStatusUpdate([Timer? timer]) async {
     // just in case
     _timerHandle?.cancel();
     timer?.cancel();
@@ -197,12 +197,12 @@ class DataConnectionChecker {
 
   // _lastStatus should only be set by _maybeEmitStatusUpdate()
   // and the _statusController's.onCancel event handler
-  DataConnectionStatus _lastStatus;
-  Timer _timerHandle;
+  DataConnectionStatus? _lastStatus;
+  Timer? _timerHandle;
 
   // controller for the exposed 'onStatusChange' Stream
-  StreamController<DataConnectionStatus> _statusController =
-      StreamController.broadcast();
+  final StreamController<DataConnectionStatus> _statusController =
+  StreamController.broadcast();
 
   /// Subscribe to this stream to receive events whenever the
   /// [DataConnectionStatus] changes. When a listener is attached
@@ -278,13 +278,13 @@ class AddressCheckOptions {
   final Duration timeout;
 
   AddressCheckOptions(
-    this.address, {
-    this.port = DataConnectionChecker.DEFAULT_PORT,
-    this.timeout = DataConnectionChecker.DEFAULT_TIMEOUT,
-  });
+      this.address, {
+        this.port = DataConnectionChecker.DEFAULT_PORT,
+        this.timeout = DataConnectionChecker.DEFAULT_TIMEOUT,
+      });
 
   @override
-  String toString() => "AddressCheckOptions($address, $port, $timeout)";
+  String toString() => 'AddressCheckOptions($address, $port, $timeout)';
 }
 
 /// Helper class that contains the address options and indicates whether
@@ -294,10 +294,10 @@ class AddressCheckResult {
   final bool isSuccess;
 
   AddressCheckResult(
-    this.options,
-    this.isSuccess,
-  );
+      this.options,
+      this.isSuccess,
+      );
 
   @override
-  String toString() => "AddressCheckResult($options, $isSuccess)";
+  String toString() => 'AddressCheckResult($options, $isSuccess)';
 }
